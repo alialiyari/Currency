@@ -1,0 +1,35 @@
+﻿@model ServiceDto<List<global::Rate.NodeModel>, string>
+@{
+    string to = Model.D2;
+}
+@if (Model.Status == 0)
+{
+    <div class="alert alert-warning border-warning">
+        <h5>@Model.Message</h5>
+    </div>
+    return;
+}
+
+@if (Model.D1.Where(x => x.Currency == to).Count() == 0)
+{
+    <div class="alert alert-warning border-warning">
+        <h5>متاسفانه هیچ مسیری پیدا نشد</h5>
+    </div>
+    return;
+}
+
+@foreach (var path in Model.D1.Where(x => x.Currency == to))
+{
+    var node = path;
+    <div class="d-flex">
+        @do
+        {
+            <div class="p-2 border m-2" style="width: 100px; text-align:center; ">
+                @node.Currency
+                <hr />
+                @node.Rate
+            </div>
+            node = node.ParentNode;
+        } while (node != null);
+    </div>
+}

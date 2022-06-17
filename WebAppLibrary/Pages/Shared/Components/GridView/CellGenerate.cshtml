@@ -1,0 +1,91 @@
+﻿@using Extensions
+@model GridViewPartialRenderDTO
+@{
+    string OnClick = "";
+    if (!string.IsNullOrEmpty(Model.Column.OnClick)) { Model.Column.ColClass += " Clickable"; OnClick = OnClick = $" onclick={Model.Column.OnClick}('{Model.Id}') "; }
+
+
+    if (string.IsNullOrEmpty(Model.Column.Name))
+    {
+        <td @OnClick></td>
+    }
+    else
+    {
+        var property = Model.Row.Data.GetType().GetProperty(Model.Column.Name);
+
+
+        // string
+        if (Model.Column.Type == GridViewColumnType.String)
+        {
+            if (property == null)
+            {
+                <td class="@Model.Column.ColClass" @OnClick> </td>
+            }
+            else
+            {
+                var Type = Nullable.GetUnderlyingType(property.PropertyType);
+                if (Type == null) { Type = property.PropertyType; }
+
+                if (Type.IsEnum == true)
+                {
+                    var str = EnumHelper.GetDisplayAttributeValue(Type, property.GetValue(Model.Row.Data)?.ToString());
+                    <td class="@Model.Column.ColClass" @OnClick> @str</td>
+                }
+                else
+                {
+                    <td class="@Model.Column.ColClass" @OnClick> @Html.Raw(property?.GetValue(Model.Row.Data, null)) </td>
+
+                }
+            }
+
+        }
+        // date
+        else if (Model.Column.Type == GridViewColumnType.Date)
+        {
+            <td class="@Model.Column.ColClass" @OnClick> @(((System.DateTime?) property?.GetValue(Model.Row.Data, null))?.ToShortDateString()) </td>
+        }
+        // number
+        else if (Model.Column.Type == GridViewColumnType.Number)
+        {
+            <td class="@Model.Column.ColClass" @OnClick>
+                @(((int?) property?.GetValue(Model.Row.Data, null))?.ToSepratedDigit())
+            </td>
+        }
+        // Time
+        else if (Model.Column.Type == GridViewColumnType.Time)
+        {
+            //ColumnIndex += 1;
+            <td class="@Model.Column.ColClass" @OnClick> @(((System.DateTime?) property?.GetValue(Model.Row.Data, null))?.ToShortTimeString()) </td>
+        }
+        // persian date
+        else if (Model.Column.Type == GridViewColumnType.PersianDate)
+        {
+            <td class="@Model.Column.ColClass text-left" @OnClick>
+
+                @if (Model.Column.DateTypeToShortDate == true)
+                {
+                    <time> @(((System.DateTime?)property?.GetValue(Model.Row.Data, null))?.ToString("HH:mm")) </time>
+                }
+
+                <time>@(((System.DateTime?) property?.GetValue(Model.Row.Data, null))?.ToPersianDate())</time>
+
+            </td>
+        }
+        // checkbox
+        else if (Model.Column.Type == GridViewColumnType.Checkbox)
+        {
+            <td @OnClick>
+                @if ((bool?)Model.Row.GetType().GetProperty(Model.Column.Name)?.GetValue(Model.Row.Data, null) == true)
+                {
+                    <i class="icons icon-ok"> </i>
+                }
+            </td>
+        }
+        // custom
+        else if (Model.Column.Type == GridViewColumnType.Custom)
+        {
+            @(await Html.PartialAsync(Model.CustomizationPartialViewAddress, new GridViewPartialRenderDTO() { Column = Model.Column, Row = Model.Row, Id = Model.Id, RowIndex = Model.RowIndex, Action = ActionType.CustomColumnGeneration }));
+
+        }
+    }
+}

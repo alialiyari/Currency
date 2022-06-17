@@ -1,0 +1,18 @@
+﻿<div class="modal fade" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header border-warning py-1">
+                <h5 class="modal-title"> @await RenderSectionAsync("Header", required: false)</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @RenderBody()
+            </div>
+            <div class="modal-footer border-warning py-1">
+                @await RenderSectionAsync("Footer", required: false)
+             </div>
+        </div>
+    </div>
+</div>
+
+ 

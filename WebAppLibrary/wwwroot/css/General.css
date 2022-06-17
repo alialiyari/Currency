@@ -1,0 +1,170 @@
+﻿@font-face {
+    /*ok*/
+    font-family: vazir;
+    src: url('/_content/WebAppLibrary/fonts/vazir-font-v18.0.0/Vazir.woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-size: .875rem;
+}
+
+.ltr {
+    direction: ltr;
+    text-align: left
+}
+
+.rtl {
+    direction: rtl;
+    text-align: right;
+}
+
+body, h1, h2, h3, h4, h5, h6, span, option {
+    font-family: vazir !important;
+}
+
+[class*=" bi-"]::before, [class^=bi-]::before {
+    vertical-align: middle;
+}
+
+.form-label {
+    margin-bottom: 2px;
+    margin-top: 15px;
+}
+
+.GVColumnTitle {
+    margin-left: auto;
+}
+
+.ltr .GVColumnTitle {
+    margin-left: inherit;
+    margin-right: auto;
+}
+
+
+.Clickable {
+    color: #007bff;
+    cursor: pointer;
+}
+
+    .Clickable:hover {
+        text-decoration: underline;
+    }
+
+
+.GridView {
+    padding: 8px;
+    border-radius: .25rem !important;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+}
+
+    .GridView .Index {
+        vertical-align: middle;
+        padding: 0;
+        text-align: center;
+        width: 40px;
+    }
+
+    .GridView td {
+        padding: 8px;
+    }
+
+label {
+    text-align: justify;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+    line-height: 40px;
+    text-align: justify;
+}
+
+
+.se-pre-con {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background: url(/images/Preloader_8.gif) center no-repeat #ffffff8c;
+}
+
+.select2-selection--single {
+    height: 38px !important;
+}
+
+.select2-selection__rendered {
+    line-height: 38px !important;
+}
+
+.has-error {
+}
+
+    .has-error label {
+        color: red !important;
+    }
+
+    .has-error input {
+        border: solid 1px red !important;
+    }
+
+    .has-error .select2-selection--single {
+        border: solid 1px red !important;
+    }
+
+    .has-error .custom-file-container__image-preview {
+        border: solid 1px red;
+    }
+
+.validated {
+}
+
+    .validated label {
+        color: #178138;
+    }
+
+    .validated input, .validated .form-control {
+        border: solid 1px #178138;
+    }
+
+    .validated .select2-selection--single {
+        border: solid 1px #178138
+    }
+
+    .validated .custom-file-container__image-preview {
+        border: solid 1px green;
+    }
+
+.ErrorList {
+    color: #6d6d6d;
+    list-style: none;
+}
+
+    .ErrorList li {
+        margin-top: 10px;
+    }
+
+
+/* begin of customizing bootbox */
+.modal-dialog {
+    height: 100%;
+    margin-top: 0;
+    margin-bottom: 0;
+    display: flex;
+}
+
+.modal-content {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+/* end of customizing bootbox */
+
+.custom-file-container__image-preview {
+    background-size: contain;
+    overflow: auto;
+    border: solid 1px #c0c0af;
+    border-top: 0;
+    margin-top: 0;
+}

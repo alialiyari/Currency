@@ -1,0 +1,99 @@
+﻿@{
+    Layout = "_FirstLayout";
+}
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="SidbarMenu" style="width: 100%; max-width: 350px; ">
+
+    <div class="offcanvas-body p-2">
+        <div class="text-center py-3 rounded ">
+            <a href="/Collector/" class="mt-4 text-decoration-none">
+                <img src="@User.ImageUrl()" class="img-thumbnail " style="width: 30%;" />
+            </a>
+        </div>
+
+        <div class="row card-body col-12  mx-auto shadow border">
+            <div class="col-11 text-center"> <a href="" class=" text-decoration-none link-dark ">@User.FullName()</a> </div>
+            <div class="col-1 text-right"> <i class="bi bi-chevron-compact-left"></i> 	</div>
+        </div>
+
+        <div class=" row mt-3  g-1 ">
+
+            <div class="col">
+                <div class="text-center p-2 shadow border">
+                    <i class="bi bi-speedometer" style="color:#eb7a34;"></i>
+                    <a href="/Admin/" class="nav-link link-dark "><strong>داشبورد من </strong></a>
+
+                    <p class="card-text"><small class="text-muted">اطلاعات و دسترسی ها</small></p>
+                </div>
+            </div>
+        </div>
+
+        <div class=" row mt-1  g-1 ">
+            <div class="col">
+                <div class=" text-center p-2 shadow border">
+                    <i class="bi bi-chat-right-text-fill" style="color:#eb7a34;"></i>
+                    <a href="/AboutUs/" class="nav-link link-dark"><strong>درباره ما</strong></a>
+                    <p class="card-text"><small class="text-muted">درباره ما بیشتر بدانید</small></p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="text-center p-2 shadow border">
+                    <i class="bi bi-box-arrow-left" style="color:red;"></i>
+                    <a href="/Identity/Logout/" class="nav-link link-dark"> <strong>خروج</strong></a>
+                    <p class="card-text"><small class="text-muted">اگه رفتی باز به ما سر بزن</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<header class="shadow bg-primary" id=MainHeader>
+    <div class="col-12 col-xl-9 mx-auto">
+        <div class="d-flex px-2">
+            @*<div style="width: 65px;">
+            <a href="/"><img src="~/Images/logo.png" class="me-4" style="height: 65px; position:absolute;" /></a>
+            </div>*@
+            <button class="btn btn-link text-decoration-none text-white" type="button" data-bs-toggle="offcanvas" data-bs-target="#SidbarMenu">
+                <span class="bi bi-list"><span style="font-size:16px; margin-right: 8px;">@User.FullName()</span></span>
+            </button>
+
+            <button type="button" class="btn Refresh ms-auto mx-2" onclick="window.location.reload();"></button>
+            @*<button type="button" class="btn Tanzim AndroidLink d-none " onclick="NationalCodeSelect()"></button>
+
+            <a class="btn Search mx-2" href="/Store/Product/"></a>
+            <a href="/Store/Order/Current/" class="d-flex Basket text-decoration-none">
+            <span class="bg-danger badge text-white px-1 m-auto" id="OrderCountSpan"></span>
+            </a>*@
+        </div>
+    </div>
+</header>
+
+
+<div class="container-fluid mt-2" id=MainContainer>
+    <div class="col-12 col-xl-9 mx-auto">
+        <main>
+            @if (IsSectionDefined("Header"))
+            {
+                <div class="border bg-white my-2 p-3 py-1 shadow rounded">
+                    @await RenderSectionAsync("Header", required: false)
+                </div>
+            }
+            @RenderBody()
+            @if (IsSectionDefined("Footer"))
+            {
+                <div class="border bg-white my-2 p-3 py-1  rounded text-end">
+                    @await RenderSectionAsync("Footer", required: false)
+                </div>
+            }
+        </main>
+
+    </div>
+</div>
+
+
+@section Scripts{
+    @await RenderSectionAsync("Scripts", required: false)
+}

@@ -1,0 +1,97 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "Swiper@7.2.0",
+      "files": [ "swiper-bundle.min.css", "swiper-bundle.min.js", "swiper-bundle.min.js.map" ],
+      "destination": "wwwroot/lib/Swiper/"
+    },
+    {
+      "library": "select2@4.0.13",
+      "files": [ "css/select2.min.css", "js/select2.full.min.js" ],
+      "destination": "wwwroot/lib/select2/"
+    },
+    {
+      "library": "jquery@3.6.0",
+      "files": [ "jquery.min.js", "jquery.min.map" ],
+      "destination": "wwwroot/lib/jquery/"
+    },
+    {
+      "library": "bootbox.js@5.5.2",
+      "files": [ "bootbox.min.js" ],
+      "destination": "wwwroot/lib/bootbox/"
+    },
+    {
+      "library": "popper.js@2.11.2",
+      "files": [ "umd/popper.min.js", "umd/popper.min.js.map" ],
+      "destination": "wwwroot/lib/popper/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "twitter-bootstrap@5.1.3",
+      "files": [
+        "css/bootstrap.min.css",
+        "css/bootstrap.min.css.map",
+
+        "css/bootstrap.rtl.min.css",
+        "css/bootstrap.rtl.min.css.map",
+
+        "js/bootstrap.bundle.min.js",
+        "js/bootstrap.bundle.min.js.map"
+      ],
+      "destination": "wwwroot/lib/bootstrap/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "bootstrap-icons@1.8.1",
+      "files": [
+        "font/bootstrap-icons.min.css",
+        "font/fonts/bootstrap-icons.woff",
+        "font/fonts/bootstrap-icons.woff2"
+      ],
+      "destination": "wwwroot/lib/bootstrap-icon/"
+    },
+    {
+      "library": "normalize@8.0.1",
+      "files": [ "normalize.min.css", "normalize.min.css.map" ],
+      "destination": "wwwroot/lib/normalize/"
+    },
+    {
+      "library": "autonumeric@4.1.0",
+      "files": [ "autoNumeric.min.js", "autoNumeric.min.js.map" ],
+      "destination": "wwwroot/lib/autonumeric/"
+    }, 
+    {
+      "library": "file-upload-with-preview@4.2.0",
+      "files": [ "file-upload-with-preview.min.js", "file-upload-with-preview.min.css" ],
+      "destination": "wwwroot/lib/file-upload-with-preview"
+    },
+    {
+      "library": "ckeditor@4.16.2",
+      "files": [ "ckeditor.min.js", "contents.min.css", "lang/en.min.js", "styles.min.js" ],
+      "destination": "wwwroot/lib/ckeditor4/"
+    },
+    {
+      "library": "Chart.js@3.6.0",
+      "files": [ "chart.js", "chart.min.js" ],
+      "destination": "wwwroot/lib/ChartJS/"
+    },
+    {
+      "library": "moment.js@2.29.1",
+      "files": [ "moment.js", "moment-with-locales.js" ],
+      "destination": "wwwroot/lib/Moment/"
+    },
+    {
+      "library": "jstree@3.3.12",
+      "files": [
+        "jstree.min.js",
+        "themes/default/32px.png",
+        "themes/default/40px.png",
+        "themes/default/style.min.css",
+        "themes/default/throbber.gif"
+      ],
+      "destination": "wwwroot/lib/JsTree/"
+    }
+  ]
+}

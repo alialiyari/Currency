@@ -1,0 +1,43 @@
+﻿@page
+@model Admin.Rate.IndexPageModel
+
+@section Header{
+    <div class="d-flex align-items-center">
+        <h4 class="m-0"> <i class="bi bi-chat-left-dots text-primary"></i> لیست نرخ ها </h4>
+        <button type="button" class="btn btn-sm btn-outline-primary ms-auto" onclick="Manage()">
+            <i class="bi bi-plus-circle"></i>
+            ثبت نرخ جدید
+        </button>
+    </div>
+}
+    <grid-view response-url="?handler=GVResponse" customization-partial-view-address="GVCustomization">
+        <grid-view-column name="From" title="از" width="100" />
+        <grid-view-column name="To" title="به" width="100"/>
+        <grid-view-column name="Rate" title="نرخ" />
+
+        <grid-view-column type="Button" button-icon="bi-trash" button-type-class="btn-outline-danger" on-click="Delete" width="60" />
+    </grid-view>
+    @section Scripts{
+    <script>
+
+        function Delete(Id) {
+            Confirm("آیا مطمئن به حذف هستید؟", function(Result) {
+                if (Result == true) {
+                    $.post('?handler=Delete', { Id: Id }, function(Result) {
+                        Toast({ message: Result.Message });
+                        gv("GV").Refresh();
+                    })
+                }
+            });
+        }
+
+        function Manage(Id) {
+            Modal5Show({
+                Url: "/Admin/Rate/Manage/?Id=" + Id, OnClose: function() {
+                    gv("GV").Refresh();
+                }
+            })
+        }
+    </script>
+
+}

@@ -1,0 +1,104 @@
+﻿@using Mapster
+@model GridViewDTO
+@{
+    var FilterConditionItems = EnumHelper<FilterConditionEnum>.ToList();
+    var buttonColumns = Model.Columns.Where(q => q.Type == GridViewColumnType.Button)?.ToList();
+}
+<thead>
+    <tr>
+        <th class="text-center" width="60">#</th>
+
+        @foreach (GridViewColumn column in Model.Columns.Where(x => x.Type != GridViewColumnType.Button))
+        {
+
+            var FilterOperatorItems = EnumHelper<StringFilterOperator>.ToList();
+            if (column.FilterType ==  GridViewFilterType.Number || column.FilterType == GridViewFilterType.Date)
+            {
+                FilterOperatorItems = EnumHelper<NumberFilterOperator>.ToList();
+            }
+            else if (column.FilterType == GridViewFilterType.Select2)
+            {
+                FilterOperatorItems = EnumHelper<Select2FilterOperator>.ToList();
+            }
+
+
+            var filters = Model.DataSouceRequest.Filters.Where(x => x.Field == column.Name)
+                .Select(x => new { Operator = x.Operator.Adapt<byte>(), x.Value, x.ValueTitle }).ToList();
+
+            <th scope="col" data-columnname="@column.Name" width="@column.Width">
+                @if (column.FilterType == GridViewFilterType.None)
+                {
+                    <div class="GVColumnTitle">@column.Title</div>
+                }
+                else
+                {
+                    <input type="hidden" id="@(column.Name)ColumnFilters" value="@Newtonsoft.Json.JsonConvert.SerializeObject(filters)" />
+                    <div class="d-flex">
+                        <div class="GVColumnTitle">
+                            <div>@column.Title</div>
+                        
+                        </div>
+                        <a href="#" onclick="gv('@Model.Id').FilterPanelShow('@column.Name')"><i class="bi-three-dots-vertical @(filters.Count() > 0? "text-danger": "")"></i></a>
+                    </div>
+
+
+                    <div class="modal" tabindex="-1" role="dialog" id="@(column.Name)Manage" style="overflow-y:auto;">
+                        <div class="modal-dialog" style="max-width:inherit ; width: 800px;">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h3>مدیریت اطلاعات ستون @column.Title</h3>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row d-none">
+                                        <select label-text="شرط" col-class="col Operator" items="FilterOperatorItems" id="@(column.Name)Operator" />
+                                        @if (column.FilterType == GridViewFilterType.Enum)
+                                        {
+                                            <select label-text="مقدار" col-class="col Value" items="column.FilterItems" id="@(column.Name)Value" />
+                                        }
+                                        else if (column.FilterType == GridViewFilterType.Select2)
+                                        {
+                                            <select2 label-text="مقدار" col-class="col Value" response-url="@(column.Select2ResponseUrl)"
+                                                     id="@(column.Name)Value" />
+                                        }
+                                        else if (column.FilterType == GridViewFilterType.Date)
+                                        {
+                                            <datebox label-text="مقدار" col-class="col Value" id="@(column.Name)Value" />
+                                        }
+                                        else
+                                        {
+                                            <textbox label-text="مقدار" col-class="col Value" id="@(column.Name)Value" />
+                                        }
+
+                                       @* <div class="col d-none">
+                                            <label class="form-label">ادامه با</label>
+                                            <select class="form-control Condition">
+                                                @foreach (var item in FilterConditionItems)
+                                                {
+                                                    <option value="@item.Value">@item.Text</option>
+                                                }
+                                            </select>
+                                        </div>*@
+                                        <div class="col-auto align-self-end">
+                                            <button class="btn btn-danger" onclick="gv('@Model.Id').FilterRemove(this)"><i class="bi-trash-fill"></i></button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-outline-secondary" onclick="gv('@Model.Id').FilterAdd('@(column.Name)')"><i class="bi-plus-circle-dotted"></i> اضافه کردن فیلتر </button>
+                                    <button class="btn btn-outline-success" onclick="gv('@Model.Id').ColumnFilterApply('@(column.Name)')"><i class="bi-check-circle"></i> اعمال فیلتر </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </th>
+        }
+        @if (buttonColumns.Count() > 0)
+        {
+            <th scope="col" width="@buttonColumns.Sum(x=>x.Width)"></th>
+        }
+
+    </tr>
+</thead>

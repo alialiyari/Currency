@@ -1,0 +1,158 @@
+﻿@page
+@model Identity.LoginPageModel
+@{
+    Layout = "_FirstLayout";
+}
+<style>
+    .parent {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: -85vh;
+    }
+</style>
+
+<div class="row vh-100 g-0">
+    <div class="col-6" style=" background-repeat:no-repeat; background-color:#fddfdf; background-position-y: center; ">
+        <div style="position:absolute; right: 0; bottom: 0;">
+            <div class="ms-1 ms-sm-4 mb-1 mb-sm-5">
+            </div>
+        </div>
+    </div>
+    <div class="col-6" style="background-image:url(/Moringa.jpg); background-repeat:no-repeat; background-position-y: top; background-position-x:left; background-color:#d3d2d0;">
+    </div>
+</div>
+<div style="position:absolute; top:0; left: 0; width:100%" dir="ltr">
+    <div class="row2">
+        <div class="col-12 cols-sm-8 col-md-6 col-lg-4 col-xl-3">
+        </div>
+    </div>
+</div>
+<div class="parent px-3 ltr " dir="ltr">
+    <div class="bg-white  col-12 col-sm-12 col-md-9 col-lg-6 col-xl-4 col-xxl-3" style="border-radius: 25px; box-shadow: 0 0px 20px 10px rgba(10, 10, 20, 0.40);  ">
+        <div id="LoginPanel">
+            <h3 class="text-center m-5" style="font-weight: bolder">Hi, Welcome Back! </h3>
+            <div class="px-3">
+                <div class="row" style="margin-top: -12px ">
+                    <textbox id="UserName" label-text=" " col-class="col-12" place-holder="User name" is-required="true" input-extra-class="ltr" group-name="Login" />
+                </div>
+                <div class="row " style="margin-top: -12px ">
+                    <textbox id="Password" label-text=" " col-class="col-12" place-holder="Password" is-required="true" input-extra-class="ltr" group-name="Login" />
+                </div> 
+
+                <div class="my-5 ">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="d-grid">
+                                <button class=" btn btn-warning text-white" onclick="Login()"> <span class="fs-5">Sign In</span></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row my-5 ">
+                        <div class="col-12">
+                            <div class="text-center">
+                                <div>
+                                    <input type="checkbox" id="RememberMe">
+                                    <label class="MyTextMuted" for="RememberMe">Remember me</label>
+                                </div>
+                                <div class="">
+                                    <label class="MyTextMuted " onclick="RegisterShow()">Or Register?</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="RegisterPanel" style="display:none; padding-bottom: 50px;">
+            <h3 class="text-center ltr" style="margin-top: 75px; margin-bottom: 50px;  font-weight: bolder">Register to Currency! </h3>
+            <div class="p-3">
+                <div class="row">
+                    <textbox id="RregisterUserName" label-text=" " col-class="col-12" place-holder="User name" is-required="true" input-extra-class="ltr" group-name="Register" />
+                </div>
+                <div class="row " style="margin-top: -12px ">
+                    <textbox id="Mobile" label-text=" " col-class="col-12" place-holder="Mobile" is-required="true" input-extra-class="ltr" group-name="Register" />
+                </div>
+
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <div class="d-grid">
+                            <button class=" btn btn-primary MyPrimary text-white" onclick="Register()"> <span class="fs-5">Register</span></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <div class="text-center">
+                            <div class="">
+                                <label class=" MyTextMuted " onclick="LoginPanelShow()">Return to login panel</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script>
+        function RegisterShow() {
+            $("#LoginPanel").hide();
+            $("#RegisterPanel").show();
+        }
+        function LoginPanelShow() {
+            $("#LoginPanel").show();
+            $("#RegisterPanel").hide();
+        }
+
+        function Register() {
+            var v = ValidateGroup('Register');
+            if (v != null) { AlertLarg(WarnningIcon + v); return; }
+
+            var data = CollectformData();
+            data.Password = $("#Password").val();
+
+            $.post('?handler=Register', data, function(result) {
+                if (result.Status == 0) {
+                    if (result.Message) { AlertLarg(result.Message); return; }
+                    if (result.Errors) { var message = ErrorDisplay(result.Errors); AlertLarg(message); return; }
+                }
+                AlertLarg(result.Message, function() { window.location = "/" })
+            })
+        }
+    </script>
+    <script>
+        $("#Password").attr('type', 'password');
+        async function Login() {
+            var v = ValidateGroup('Login');
+            if (v != null) { AlertLarg(WarnningIcon + v); return; }
+
+            var data = CollectformData();
+            data.Password = $("#Password").val();
+            var result = await FechData({ url: '?handler=Login', data: data })
+
+            if (result.Status == 0) {
+                if (result.Message) { Toast({ message: result.Message, bgColor: "bg-warning" }); return; }
+                if (result.Errors) { var message = ErrorDisplay(result.Errors); Toast({ message: message, bgColor: "bg-warning" }); return; }
+            }
+
+
+            if (IsAndroidApp() == true) {
+                var resultCall = CallCSharpFunction({ action: 'Login', token: result.Data.Token });
+                if (resultCall.Status == 0) Toast({ message: result.Message, bgColor: "bg-warning" });
+            }
+
+            setTimeout(function() {
+                window.location = result.Data.ReturnUrl;
+            }, 100)
+        }
+    </script>
+
+}

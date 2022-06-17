@@ -1,0 +1,35 @@
+﻿@page
+@model Admin.Rate.RoutePageModel
+
+
+
+<div class="card">
+    <div class="card-header">پیدا کردن مسیر تبدیل</div>
+    <div class="card-body">
+
+        <div class="row">
+            <textbox id="From" label-text="از" is-required="true" input-extra-class="ltr" />
+            <textbox id="To" label-text="به" is-required="true" input-extra-class="ltr" />
+        </div>
+    </div>
+    <div class="card-footer d-flex">
+        <button type="button" class="btn btn-outline-success ms-auto" onclick="Search()"><i class="bi bi-search"></i> جستجو</button>
+    </div>
+</div>
+
+<div id="ResultDiv" class="mt-2"></div>
+
+@section Scripts{
+    <script>
+        async  function Search() {
+            let result = ValidateGroup();
+            if (result != null) { Toast({ message: result, bgColor: 'bg-warning' }); return; }
+
+
+
+            result = await FechData({ url: '/Admin/Rate/Route/?handler=Find', data: CollectformData() });
+            document.querySelector("#ResultDiv").innerHTML = result;
+        }
+    </script>
+
+}

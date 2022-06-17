@@ -1,0 +1,45 @@
+﻿@page
+@model Admin.Customer.IndexPageModel
+
+
+<h4 class="my-0">
+    <i class="bi bi-card-checklist text-primary"></i>
+    <span>مشتری ها</span>
+</h4>
+<hr />
+
+<div class="card">
+
+    <div class="card-header">جستجو در مشتری ها</div>
+    <div class="card-body">
+
+        <div class="row">
+            <textbox id=SearchTitle label-text="نام" />
+            <numberbox id=SearchCustomerNo label-text="شماره مشتری" />
+        </div>
+    </div>
+    <div class="card-footer d-flex">
+        <button type="button" class="btn btn-outline-success ms-auto" onclick="Search()"><i class="bi bi-search"></i> جستجو</button>
+    </div>
+</div>
+ 
+
+@section Scripts{
+    <script>
+        gv("GV").OnDataSendToServer = function(data) {
+            data.Title = $("#SearcTitle").val();
+            data.CustomerNo = $("#SearchCustomerNo").val();
+            return data;
+        }
+
+        function Search() {
+            gv("GV").Refresh();
+        }
+
+        function FactorAddShow(Id) {
+            //window.location = "/Admin/Factor/Manage/"
+            //OffCanvasShow({Url: '/FactorPaymentRequest/Info?Mode=View&Id=' + Id, OnClose: function(){ }});
+        }
+
+    </script>
+}

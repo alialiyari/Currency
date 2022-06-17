@@ -1,0 +1,191 @@
+﻿@using Extensions
+@using Microsoft.AspNetCore.Html
+@inject ViewRenderService viewRenderService
+
+@model GridViewDTO
+@{
+    long RowIndex = (Model.DataSouceRequest.PageNumber - 1) * Model.DataSouceRequest.PageSize;
+    int PageCount = (int)(Math.Ceiling((double)Model.Count.GetValueOrDefault() / (double)Model.DataSouceRequest.PageSize));
+}
+@if (Model.FirstLoad == false)
+{
+    <div class="text-center bg-white p-2 shadow rounded GVLoading"><button class="btn btn-sm btn-secondary" onclick="gv('@Model.Id').Refresh()">Loading Data</button></div>
+    return;
+}
+
+@if (Model.ViewType == ViewTypeEnum.ExcelExport)
+{
+     var ToWrite = new List<List<string>>();
+    ToWrite.Add(new List<string>());
+
+    @foreach (var col in Model.Columns)
+    {
+        if (string.IsNullOrEmpty(col.Title) == false) { ToWrite.Last().Add(col.Title); }
+    }
+
+    @foreach (var gridRow in Model.Rows)
+    {
+        ToWrite.Add(new List<string>());
+
+        foreach (var col in Model.Columns)
+        {
+            if (string.IsNullOrEmpty(col.Title) == true) { continue; }
+
+            var result = await viewRenderService.RenderToStringAsync("/Pages/Shared/Components/GridView/CellGenerate.cshtml", new GridViewPartialRenderDTO()
+                        {
+                            Column = col,
+                            CustomizationPartialViewAddress = Model.CustomizationPartialViewAddress,
+                            Row = gridRow,
+                            RowIndex = RowIndex
+                        });
+
+            ToWrite.Last().Add(new HtmlString(result).RemoveHtmlTag());
+        }
+        RowIndex += 1;
+    }
+    //writer.WriteLine("]");
+
+    @(Html.Raw(Json.Serialize(ToWrite)))
+    return;
+}
+
+@if (Model.ViewType == ViewTypeEnum.Card)
+{
+    <div class="@Model.ExcelRowColumns">
+        @foreach (var gridRow in Model.Rows)
+        {
+            <div class="col">
+                @(await Html.PartialAsync(Model.CustomizationPartialViewAddress, new GridViewPartialRenderDTO() { Id = Model.Id, Row = gridRow, Action = ActionType.CardGenerate }))
+            </div>
+        }
+    </div>
+}
+else
+{
+    var buttonColumns = Model.Columns.Where(q => q.Type == GridViewColumnType.Button)?.ToList();
+
+    <div class="table-responsive bg-white GridView my-1" style="min-height: 400px;">
+        <table class="table table-bordered table-striped  table-hover m-0 fontsize-sm align-middle">
+
+            @(await Html.PartialAsync("theadGenerate.cshtml", Model))
+
+            <tbody>
+
+                @foreach (var gridRow in Model.Rows)
+                {
+                    RowIndex += 1;
+                    var ColumnIndex = 1;
+                    var row = gridRow.Data;
+
+                    string Id = "";
+                    var property = gridRow.Data.GetType().GetProperty(Model.ColumnKeyName);
+
+
+
+                    if (property != null) { Id = property.GetValue(gridRow.Data, null).ToString(); }
+
+                    <tr data-id="@Id">
+                        <td>
+                            @if (Model.MenuGenerationIsInCustom == false)
+                            {
+                                if (Model.Actions == null || Model.Actions.Count == 0)
+                                {
+                                    @RowIndex
+                                }
+                                else
+                                {
+                                    <div class="dropdown">
+                                        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                            @RowIndex
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            @foreach (var action in Model.Actions)
+                                            {
+                                                if (string.IsNullOrEmpty(action.Title))
+                                                {
+                                                    <li> <hr class="dropdown-divider"></li>
+                                                }
+                                                else
+                                                {
+                                                    <li><a class="dropdown-item" href="#" onclick="@($"{action.OnClick}('{Id}')")">@action.Title</a></li>
+                                                }
+                                            }
+                                        </ul>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+
+                                @(await Html.PartialAsync(Model.CustomizationPartialViewAddress, new GridViewPartialRenderDTO() { Row = gridRow, Id = Id, RowIndex = RowIndex, Action = ActionType.MenuGenerate }));
+                            }
+
+                        </td>
+
+                        @foreach (GridViewColumn column in Model.Columns.Where(x => x.Type != GridViewColumnType.Button))
+                        {
+                            ColumnIndex += 1;
+                            @(await Html.PartialAsync("CellGenerate.cshtml", new GridViewPartialRenderDTO() { Column = column, Id = Id, CustomizationPartialViewAddress = Model.CustomizationPartialViewAddress, Row = gridRow, RowIndex = RowIndex }));
+                        }
+                        @if (buttonColumns.Count() > 0)
+                        {
+                            ColumnIndex += 1;
+                            <td>
+                                @foreach (var column in buttonColumns)
+                                {
+                                    <button onclick="@(column.OnClick)('@Id')" class="btn @column.ButtonTypeClass">
+                                        <i class="@column.ButtonIcon"></i>
+                                        @column.ButtonTypeText
+                                    </button>
+                                }
+                            </td>
+                        }
+                    </tr>
+
+                }
+            </tbody>
+        </table>
+        @if (Model.Rows.Count == 0)
+        {
+            <div class="alert alert-warning border-warning mt-3 mb-0"><h5>رکوردی برای نمایش یافت نشد</h5></div>
+        }
+    </div>
+
+
+}
+
+@if (Model.Rows.Count != 0)
+{
+    <nav class="card mt-2 mb-3 shadow rounded">
+        <div class="card-body p-2">
+            <ul class="pagination justify-content-center m-0">
+
+                @if (Model.DataSouceRequest.PageNumber > 3)
+                {
+                    <li class="page-item" onclick="GVPageGo(this, 1)" data-index="1"> <a class="page-link rounded-0" href="#@Model.Id"> 1 </a></li>
+                    <li class="page-item"> <span class="mx-1">...</span> </li>
+                }
+
+                @for (int i = 1; i <= PageCount; i++)
+                {
+                    if ((i > Model.DataSouceRequest.PageNumber + 2) || (i < Model.DataSouceRequest.PageNumber - 2)) { continue; }
+
+
+                    if (i == Model.DataSouceRequest.PageNumber)
+                    {
+                        <li class="page-item active" data-index="@i"> <a class="page-link bg-primary" href="#@Model.Id"> @i </a></li>
+                    }
+                    else
+                    {
+                        <li class="page-item" onclick="GVPageGo(this, @i)" data-index="@i"> <a class="page-link" href="#@Model.Id"> @i </a></li>
+                    }
+                }
+                @if (Model.DataSouceRequest.PageNumber + 2 < PageCount)
+                {
+                    <li class="page-item"> <span class="mx-1">...</span> </li>
+                    <li class="page-item @((PageCount == Model.DataSouceRequest.PageNumber) ? "active" : "")" onclick="GVPageGo(this, @PageCount)" data-index="@PageCount"> <a class="page-link  rounded-0" href="#@Model.Id"> @PageCount </a></li>
+                }
+            </ul>
+        </div>
+    </nav>
+}

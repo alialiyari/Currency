@@ -1,0 +1,17 @@
+﻿@{
+    string? Placement = "bottom";
+    if (ViewData["Placement"] != null) { Placement = ViewData["Placement"]?.ToString(); }
+}
+<div class="offcanvas offcanvas-@Placement" data-bs-scroll="true" tabindex="-1">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">@await RenderSectionAsync("Header", required: false)</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        @RenderBody()
+    </div>
+    <div class="offcanvas-footer p-2 border d-flex justify-content-end align-items-center shadow">
+        @await RenderSectionAsync("Footer", required: false)
+    </div>
+</div>
+@await RenderSectionAsync("Scripts", required: false)
